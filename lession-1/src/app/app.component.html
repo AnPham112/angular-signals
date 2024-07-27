@@ -1,0 +1,8 @@
+<h1>Shopping cart</h1>
+<select [ngModel]="quantity()" (change)="onQuantitySelected($event)">
+  <option disabled value="">--Select a quantity--</option>
+  <option *ngFor="let q of qtyAvailable()">{{q}}</option>
+</select>
+<div>Vehicle: {{ selectedVehicle().name }}</div>
+<div>Price: {{ selectedVehicle().price | number: '1.2-2' }}</div>
+<div style="font-weight: bold;">Total: {{ exPrice() | number: '1.2-2' }}</div>
