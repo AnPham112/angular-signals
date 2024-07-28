@@ -1,0 +1,19 @@
+<div class="card">
+  <div class="card-header">
+    {{title}}
+  </div>
+
+  <div class='card-body' *ngIf="vehicles().length">
+
+    <div class="list-group">
+      <button type="button" class="list-group-item" *ngFor="let vehicle of vehicles()"
+        (click)="onSelected(vehicle.name)" [ngClass]="{'active': vehicle.name === selectedVehicle()?.name}">
+        {{ vehicle.name }}
+      </button>
+    </div>
+  </div>
+
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+</div>
