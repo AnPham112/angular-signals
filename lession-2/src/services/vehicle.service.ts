@@ -1,8 +1,17 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Vehicle, VehicleResponse } from '../models/vehicle';
-import { catchError, map, Observable, shareReplay, throwError } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Film, Vehicle, VehicleResponse } from '../models/vehicle';
+import {
+  catchError,
+  filter,
+  forkJoin,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+  throwError,
+} from 'rxjs';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +38,18 @@ export class VehicleService {
 
   vehicles = toSignal(this.vehicles$, { initialValue: [] as Vehicle[] });
   selectedVehicle = signal<Vehicle | undefined>(undefined);
+
+  private vehicleFilms$ = toObservable(this.selectedVehicle).pipe(
+    filter(Boolean),
+    switchMap((vehicle) =>
+      forkJoin(vehicle.films.map((link) => this.httpClient.get<Film>(link)))
+    ),
+    catchError(this.handleError)
+  );
+
+  vehicleFilms = toSignal<Film[], Film[]>(this.vehicleFilms$, {
+    initialValue: [],
+  });
 
   vehicleSelected(name: string) {
     const foundVehicle = this.vehicles().find(
